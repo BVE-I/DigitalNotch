@@ -108,7 +108,6 @@ void main(int* pTargetIndex, int CurrentTime, int Value) {
 	if (CurrentTime - ChangeTime >= 750) {
 		//*pTargetIndex = Value;
 	}
-
-	*pTargetIndex = Value;
+	*pTargetIndex = (CurrentTime - ChangeTime) / 100;
 	ValueOld = ValueSave;
 }
