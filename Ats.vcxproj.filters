@@ -18,7 +18,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NotchDelay.cpp">
+    <ClCompile Include="DigitalNotch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="doorCloseingSecurity.cpp">
@@ -37,7 +37,7 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NotchDelay.h">
+    <ClInclude Include="DigitalNotch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="doorCloseingSecurity.h">
