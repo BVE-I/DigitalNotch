@@ -19,8 +19,13 @@ int g_reverser; // レバーサ
 bool g_pilotlamp; // パイロットランプ
 float g_speed; // 速度計の速度[km/h]
 
+int BrakeData;
+int PowerData;
+
 ATS_HANDLES g_output; // 出力
 doorCloseingSecurity g_doorCloseingSecurity; // 戸閉保安
+DigitalNotchIni g_ini;
+
 std::vector<int> BrakeChangeTime;
 std::vector<int> BrakeValue;
 std::vector<int> PowerChangeTime;
@@ -32,9 +37,9 @@ void BrakeLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOl
 	}
 	for (unsigned int i = 0; i <= BrakeChangeTime.size() + 1; i++) {
 		if (BrakeValue.size() != NULL) {
-			if (CurrentTime - BrakeChangeTime[i - 2] >= 750) {
+			if (CurrentTime - BrakeChangeTime[i - 2] >= g_ini.NotchValue.Delay) {
 				*pTargetIndex = BrakeValue[i - 2];
-				if (BrakeChangeTime.size() > 9) {
+				if (BrakeChangeTime.size() > g_ini.NotchValue.BrakeSaveDataNumber) {
 					BrakeChangeTime.erase(BrakeChangeTime.begin());
 					BrakeValue.erase(BrakeValue.begin());
 				}
@@ -50,9 +55,9 @@ void PowerLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOl
 	}
 	for (unsigned int n = 0; n <= PowerChangeTime.size() + 1; n++) {
 		if (PowerValue.size() != NULL) {
-			if (CurrentTime - PowerChangeTime[n - 2] >= 750) {
+			if (CurrentTime - PowerChangeTime[n - 2] >= g_ini.NotchValue.Delay) {
 				*pTargetIndex = PowerValue[n - 2];
-				if (PowerChangeTime.size() > 6) {
+				if (PowerChangeTime.size() > g_ini.NotchValue.PowerSaveDataNumber) {
 					PowerChangeTime.erase(PowerChangeTime.begin());
 					PowerValue.erase(PowerValue.begin());
 				}

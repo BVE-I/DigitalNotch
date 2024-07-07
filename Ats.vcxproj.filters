@@ -43,5 +43,8 @@
     <ClInclude Include="doorCloseingSecurity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DigitalNotchIni.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
