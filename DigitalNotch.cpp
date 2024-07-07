@@ -8,6 +8,7 @@
 #include "DigitalNotch.h"
 #include <stdio.h>
 #include <cmath>
+#include <vector>
 
 /// このATSプラグインの、コンピュータ上の絶対パス
 char g_module_dir[MAX_PATH];
