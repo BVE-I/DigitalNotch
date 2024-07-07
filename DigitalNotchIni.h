@@ -139,9 +139,9 @@ protected:
         NotchValue.PowerIndex        = 200;
         NotchValue.PowerSaveDataNumber = 6;
         NotchValue.BrakeIndex        = 201;
-        NotchValue.BrakeSaveDataNumber = 8;
+        NotchValue.BrakeSaveDataNumber = 9;
         NotchValue.Delay             = 750;
-        NotchValue.UpdateCycle       = 200;
+        NotchValue.UpdateCycle       = 150;
     }                                                                   
 };
 typedef DigitalNotchIni DigitalNotchFile; //êVãåå›ä∑
