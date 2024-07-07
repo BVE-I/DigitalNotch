@@ -39,8 +39,8 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	g_output.Brake = g_brakeNotch;
 	g_output.Power = g_powerNotch;
 	g_output.Reverser = g_doorCloseingSecurity.main(g_pilotlamp, g_reverser); // åÀï¬ï€à¿èoóÕ
-	main(&panel[200], vehicleState.Time, panel[200]);
-	main(&panel[201], vehicleState.Time, panel[201]);
+	main(&panel[200], vehicleState.Time, g_powerNotch);
+	main(&panel[201], vehicleState.Time, g_brakeNotch);
     return g_output;
 }
 
