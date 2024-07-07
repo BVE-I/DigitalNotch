@@ -7,6 +7,7 @@
 #include "NotchDelay.h"
 #include <stdio.h>
 #include <cmath>
+#include <vector>
 
 BOOL APIENTRY DllMain( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
@@ -39,8 +40,10 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	g_output.Brake = g_brakeNotch;
 	g_output.Power = g_powerNotch;
 	g_output.Reverser = g_doorCloseingSecurity.main(g_pilotlamp, g_reverser); // ŒË•Â•ÛˆÀo—Í
-	main(&panel[200], vehicleState.Time, g_powerNotch);
-	main(&panel[201], vehicleState.Time, g_brakeNotch);
+	PowerLagMain(&panel[200], vehicleState.Time, g_powerNotch, g_powerNotchOld);
+	BrakeLagMain(&panel[201], vehicleState.Time, g_brakeNotch, g_brakeNotchOld);
+	g_brakeNotchOld = g_brakeNotch;
+	g_powerNotchOld = g_powerNotch;
     return g_output;
 }
 
@@ -96,18 +99,4 @@ ATS_API void WINAPI Load()
 
 ATS_API void WINAPI Dispose() 
 {
-}
-
-void main(int* pTargetIndex, int CurrentTime, int Value) {
-	int ValueSave = Value;
-	int ChangeTime = NULL;
-	int ValueOld = NULL;
-	if (ValueSave != ValueOld) {
-		ChangeTime = CurrentTime;
-	}
-	if (CurrentTime - ChangeTime >= 750) {
-		//*pTargetIndex = Value;
-	}
-	*pTargetIndex = (CurrentTime - ChangeTime) / 100;
-	ValueOld = ValueSave;
 }

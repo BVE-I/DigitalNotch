@@ -6,16 +6,57 @@
 // ロで定義されたシンボルをエクスポートされたものとして参照します。
 //#pragma data_seg(".shared")
 //#pragma data_seg()
+#include <vector>
+
 
 int g_emgBrake; // 非常ノッチ
 int g_svcBrake; // 常用最大ノッチ
 int g_brakeNotch; // ブレーキノッチ
 int g_powerNotch; // 力行ノッチ
+int g_brakeNotchOld; // ブレーキノッチ
+int g_powerNotchOld; // 力行ノッチ
 int g_reverser; // レバーサ
 bool g_pilotlamp; // パイロットランプ
 float g_speed; // 速度計の速度[km/h]
 
 ATS_HANDLES g_output; // 出力
 doorCloseingSecurity g_doorCloseingSecurity; // 戸閉保安
+std::vector<int> BrakeChangeTime;
+std::vector<int> BrakeValue;
+std::vector<int> PowerChangeTime;
+std::vector<int> PowerValue;
+void BrakeLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOld) {
+	if (ValueData != ValueOld) {
+		BrakeChangeTime.push_back(CurrentTime);
+		BrakeValue.push_back(ValueData);
+	}
+	for (unsigned int i = 0; i <= BrakeChangeTime.size() + 1; i++) {
+		if (BrakeValue.size() != NULL) {
+			if (CurrentTime - BrakeChangeTime[i - 2] >= 750) {
+				*pTargetIndex = BrakeValue[i - 2];
+				if (BrakeChangeTime.size() > 9) {
+					BrakeChangeTime.erase(BrakeChangeTime.begin());
+					BrakeValue.erase(BrakeValue.begin());
+				}
+			}
+		}
+	}
+}
 
-void main(int*, int, int);
+void PowerLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOld) {
+	if (ValueData != ValueOld) {
+		PowerChangeTime.push_back(CurrentTime);
+		PowerValue.push_back(ValueData);
+	}
+	for (unsigned int n = 0; n <= PowerChangeTime.size() + 1; n++) {
+		if (PowerValue.size() != NULL) {
+			if (CurrentTime - PowerChangeTime[n - 2] >= 750) {
+				*pTargetIndex = PowerValue[n - 2];
+				if (PowerChangeTime.size() > 6) {
+					PowerChangeTime.erase(PowerChangeTime.begin());
+					PowerValue.erase(PowerValue.begin());
+				}
+			}
+		}
+	}
+}
