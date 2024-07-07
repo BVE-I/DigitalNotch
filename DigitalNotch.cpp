@@ -4,7 +4,7 @@
 #include "stdafx.h"
 #include "atsplugin.h"
 #include "doorCloseingSecurity.h"
-#include "NotchDelay.h"
+#include "DigitalNotch.h"
 #include <stdio.h>
 #include <cmath>
 #include <vector>
