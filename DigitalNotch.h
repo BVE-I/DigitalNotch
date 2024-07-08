@@ -21,6 +21,8 @@ float g_speed; // 速度計の速度[km/h]
 
 int BrakeData;
 int PowerData;
+bool Update;
+bool UpdateOld;
 
 ATS_HANDLES g_output; // 出力
 doorCloseingSecurity g_doorCloseingSecurity; // 戸閉保安

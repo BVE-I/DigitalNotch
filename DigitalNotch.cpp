@@ -79,18 +79,22 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	g_output.Brake = g_brakeNotch;
 	g_output.Power = g_powerNotch;
 	g_output.Reverser = g_doorCloseingSecurity.main(g_pilotlamp, g_reverser); // ŒË•Â•ÛˆÀo—Í
-	if ((vehicleState.Time / g_ini.NotchValue.UpdateCycle) % 2 == 0 && (g_ini.NotchValue.UpdateCycle > 0)) {
+	Update = bool((vehicleState.Time / g_ini.NotchValue.UpdateCycle) % 2);
+	if (g_ini.NotchValue.UpdateCycle <= 0) {
 		BrakeData = g_brakeNotch;
 		PowerData = g_powerNotch;
 	}
-	else if (g_ini.NotchValue.UpdateCycle <= 0) {
-		BrakeData = g_brakeNotch;
-		PowerData = g_powerNotch;
+	else {
+		if (!(UpdateOld) && Update) {
+			BrakeData = g_brakeNotch;
+			PowerData = g_powerNotch;
+		}
 	}
 	PowerLagMain(&panel[g_ini.NotchValue.PowerIndex], vehicleState.Time, PowerData, g_powerNotchOld);
 	BrakeLagMain(&panel[g_ini.NotchValue.BrakeIndex], vehicleState.Time, BrakeData, g_brakeNotchOld);
 	g_brakeNotchOld = BrakeData;
 	g_powerNotchOld = PowerData;
+	UpdateOld = Update;
     return g_output;
 }
 
