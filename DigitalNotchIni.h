@@ -1,5 +1,5 @@
 //
-// Generated on 2024/07/07 by inimoni 
+// Generated on 2024/07/08 by inimoni 
 //
 
 /*
@@ -112,7 +112,7 @@ public:
         int      BrakeIndex;
         int      BrakeSaveDataNumber;
         int      Delay;
-        int      UpdateCycle;
+        int      Interval;
     } NotchValue;
 
 protected:
@@ -130,7 +130,7 @@ protected:
         inimoni::inirw( r,f,s, _T("BrakeIndex       "), NotchValue.BrakeIndex );
         inimoni::inirw( r,f,s, _T("BrakeSaveDataNumber"), NotchValue.BrakeSaveDataNumber );
         inimoni::inirw( r,f,s, _T("Delay            "), NotchValue.Delay   );
-        inimoni::inirw( r,f,s, _T("UpdateCycle      "), NotchValue.UpdateCycle );
+        inimoni::inirw( r,f,s, _T("Interval         "), NotchValue.Interval );
         return true;                                                    
     }                                                                   
 
@@ -141,7 +141,7 @@ protected:
         NotchValue.BrakeIndex        = 201;
         NotchValue.BrakeSaveDataNumber = 9;
         NotchValue.Delay             = 750;
-        NotchValue.UpdateCycle       = 150;
+        NotchValue.Interval          = 150;
     }                                                                   
 };
 typedef DigitalNotchIni DigitalNotchFile; //êVãåå›ä∑
