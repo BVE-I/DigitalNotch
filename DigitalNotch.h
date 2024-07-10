@@ -21,8 +21,10 @@ float g_speed; // 速度計の速度[km/h]
 
 int BrakeData;
 int PowerData;
-bool Update;
-bool UpdateOld;
+bool NotchUpdate;
+bool NotchUpdateOld;
+bool PanelUpdate;
+bool PanelUpdateOld;
 
 ATS_HANDLES g_output; // 出力
 doorCloseingSecurity g_doorCloseingSecurity; // 戸閉保安
@@ -32,6 +34,12 @@ std::vector<int> BrakeChangeTime;
 std::vector<int> BrakeValue;
 std::vector<int> PowerChangeTime;
 std::vector<int> PowerValue;
+std::vector<int> PanelChangeTime{0};
+std::vector<int> PanelValue{0};
+
+std::vector<int> PanelData(256, 0);
+std::vector<int> PanelDataOld(256, 0);
+
 void BrakeLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOld) {
 	if (ValueData != ValueOld) {
 		BrakeChangeTime.push_back(CurrentTime);
@@ -55,10 +63,10 @@ void PowerLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOl
 		PowerChangeTime.push_back(CurrentTime);
 		PowerValue.push_back(ValueData);
 	}
-	for (unsigned int n = 0; n <= PowerChangeTime.size() + 1; n++) {
+	for (unsigned int i = 0; i <= PowerChangeTime.size() + 1; i++) {
 		if (PowerValue.size() != NULL) {
-			if (CurrentTime - PowerChangeTime[n - 2] >= g_ini.NotchValue.Delay) {
-				*pTargetIndex = PowerValue[n - 2];
+			if (CurrentTime - PowerChangeTime[i - 2] >= g_ini.NotchValue.Delay) {
+				*pTargetIndex = PowerValue[i - 2];
 				if (PowerChangeTime.size() > g_ini.NotchValue.PowerSaveDataNumber) {
 					PowerChangeTime.erase(PowerChangeTime.begin());
 					PowerValue.erase(PowerValue.begin());
@@ -67,3 +75,22 @@ void PowerLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOl
 		}
 	}
 }
+
+void PanelLagMain(int* pTargetIndex, int CurrentTime) {
+	if (PanelData[g_ini.PanelValue.Index] != PanelDataOld[g_ini.PanelValue.Index]) {
+		PanelChangeTime.push_back(CurrentTime);
+		PanelValue.push_back(PanelData[g_ini.PanelValue.Index]);
+	}
+	for (unsigned int i = 0; i <= PanelChangeTime.size() + 1; i++) {
+		if (PanelValue.size() != NULL) {
+			if (CurrentTime - PanelChangeTime[i - 2] >= g_ini.PanelValue.Delay) {
+				*pTargetIndex = PanelValue[i - 2];
+				if (PanelChangeTime.size() > g_ini.PanelValue.SaveDataNumber) {
+					PanelChangeTime.erase(PanelChangeTime.begin());
+					PanelValue.erase(PanelValue.begin());
+				}
+			}
+		}
+	}
+}
+

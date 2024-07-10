@@ -84,17 +84,37 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 		PowerData = g_powerNotch;
 	}
 	else {
-		Update = bool((vehicleState.Time / g_ini.NotchValue.Interval) % 2);
-		if (!(UpdateOld) && Update) {
+		NotchUpdate = bool((vehicleState.Time / g_ini.NotchValue.Interval) % 2);
+		if (!(NotchUpdateOld) && NotchUpdate) {
 			BrakeData = g_brakeNotch;
 			PowerData = g_powerNotch;
 		}
 	}
+	if (g_ini.PanelValue.Interval <= 0) {
+		for (unsigned int i = 0; i <= PanelData.size() + 1; i++) {
+			if (PanelData[i] != panel[i]) {
+				PanelData[i] = panel[i];
+			}
+		}
+	}
+	else {
+		PanelUpdate = bool((vehicleState.Time / g_ini.PanelValue.Interval) % 2);
+		if (!(PanelUpdateOld) && PanelUpdate) {
+			for (unsigned int i = 0; i <= PanelData.size() + 1; i++) {
+				if (PanelData[i] != panel[i]) {
+					PanelData[i] = panel[i];
+				}
+			}
+		}
+	}
 	PowerLagMain(&panel[g_ini.NotchValue.PowerIndex], vehicleState.Time, PowerData, g_powerNotchOld);
 	BrakeLagMain(&panel[g_ini.NotchValue.BrakeIndex], vehicleState.Time, BrakeData, g_brakeNotchOld);
+	PanelLagMain(&panel[g_ini.PanelValue.Index], vehicleState.Time);
 	g_brakeNotchOld = BrakeData;
 	g_powerNotchOld = PowerData;
-	UpdateOld = Update;
+	NotchUpdateOld = NotchUpdate;
+	PanelUpdateOld = PanelUpdate;
+	PanelDataOld = PanelData;
     return g_output;
 }
 

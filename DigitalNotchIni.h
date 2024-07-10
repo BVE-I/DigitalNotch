@@ -1,5 +1,5 @@
 //
-// Generated on 2024/07/08 by inimoni 
+// Generated on 2024/07/10 by inimoni 
 //
 
 /*
@@ -115,6 +115,15 @@ public:
         int      Interval;
     } NotchValue;
 
+    // PanelValue
+    struct _PanelValue
+    {
+        int      Index;
+        int      SaveDataNumber;
+        int      Delay;
+        int      Interval;
+    } PanelValue;
+
 protected:
 
     string_t initFileName;
@@ -131,6 +140,12 @@ protected:
         inimoni::inirw( r,f,s, _T("BrakeSaveDataNumber"), NotchValue.BrakeSaveDataNumber );
         inimoni::inirw( r,f,s, _T("Delay            "), NotchValue.Delay   );
         inimoni::inirw( r,f,s, _T("Interval         "), NotchValue.Interval );
+
+        s = _T("PanelValue");
+        inimoni::inirw( r,f,s, _T("Index            "), PanelValue.Index   );
+        inimoni::inirw( r,f,s, _T("SaveDataNumber   "), PanelValue.SaveDataNumber );
+        inimoni::inirw( r,f,s, _T("Delay            "), PanelValue.Delay   );
+        inimoni::inirw( r,f,s, _T("Interval         "), PanelValue.Interval );
         return true;                                                    
     }                                                                   
 
@@ -142,6 +157,10 @@ protected:
         NotchValue.BrakeSaveDataNumber = 9;
         NotchValue.Delay             = 750;
         NotchValue.Interval          = 150;
+        PanelValue.Index             = 202;
+        PanelValue.SaveDataNumber    = 4;
+        PanelValue.Delay             = 750;
+        PanelValue.Interval          = 150;
     }                                                                   
 };
 typedef DigitalNotchIni DigitalNotchFile; //êVãåå›ä∑
