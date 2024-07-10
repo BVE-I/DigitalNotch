@@ -104,7 +104,11 @@
     <ClInclude Include="doorCloseingSecurity.h" />
     <ClInclude Include="DigitalNotch.h" />
     <ClInclude Include="atsplugin.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DigitalNotch.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
