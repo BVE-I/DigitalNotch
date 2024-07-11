@@ -109,7 +109,7 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	}
 	if (0 <= g_ini.NotchValue.PowerIndex && g_ini.NotchValue.PowerIndex <= 255)PowerLagMain(&panel[g_ini.NotchValue.PowerIndex], vehicleState.Time, PowerData, g_powerNotchOld);
 	if (0 <= g_ini.NotchValue.BrakeIndex && g_ini.NotchValue.BrakeIndex <= 255)BrakeLagMain(&panel[g_ini.NotchValue.BrakeIndex], vehicleState.Time, BrakeData, g_brakeNotchOld);
-	if ((0 <= g_ini.PanelValue.InputIndex && g_ini.PanelValue.InputIndex <= 255) && (0 <= g_ini.PanelValue.OutputIndex && g_ini.PanelValue.OutputIndex <= 255))PanelLagMain(&panel[g_ini.PanelValue.OutPutIndex], vehicleState.Time);
+	if ((0 <= g_ini.PanelValue.InputIndex && g_ini.PanelValue.InputIndex <= 255) && (0 <= g_ini.PanelValue.OutputIndex && g_ini.PanelValue.OutputIndex <= 255))PanelLagMain(&panel[g_ini.PanelValue.OutputIndex], vehicleState.Time);
 	g_brakeNotchOld = BrakeData;
 	g_powerNotchOld = PowerData;
 	NotchUpdateOld = NotchUpdate;

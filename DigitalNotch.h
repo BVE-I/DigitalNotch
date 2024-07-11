@@ -76,7 +76,7 @@ void PowerLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOl
 	}
 }
 
-void PanelLagMain(int* pTargetIndex, int CurrentTime) {
+void PanelLagMain(int* pOutputTargetIndex, int CurrentTime) {
 	if (PanelData[g_ini.PanelValue.InputIndex] != PanelDataOld[g_ini.PanelValue.InputIndex]) {
 		PanelChangeTime.push_back(CurrentTime);
 		PanelValue.push_back(PanelData[g_ini.PanelValue.InputIndex]);
@@ -84,7 +84,7 @@ void PanelLagMain(int* pTargetIndex, int CurrentTime) {
 	for (unsigned int i = 0; i <= PanelChangeTime.size() + 1; i++) {
 		if (PanelValue.size() != NULL) {
 			if (CurrentTime - PanelChangeTime[i - 2] >= g_ini.PanelValue.Delay) {
-				*pTargetIndex = PanelValue[i - 2];
+				*pOutputTargetIndex = PanelValue[i - 2];
 				if (PanelChangeTime.size() > g_ini.PanelValue.SaveDataNumber) {
 					PanelChangeTime.erase(PanelChangeTime.begin());
 					PanelValue.erase(PanelValue.begin());
