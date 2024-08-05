@@ -1,5 +1,5 @@
 //
-// Generated on 2024/07/11 by inimoni 
+// Generated on 2024/08/05 by inimoni 
 //
 
 /*
@@ -115,15 +115,25 @@ public:
         int      Interval;
     } NotchValue;
 
-    // PanelValue
-    struct _PanelValue
+    // FirstPanelValue
+    struct _FirstPanelValue
     {
         int      InputIndex;
         int      OutputIndex;
         int      SaveDataNumber;
         int      Delay;
         int      Interval;
-    } PanelValue;
+    } FirstPanelValue;
+
+    // SecondPanelValue
+    struct _SecondPanelValue
+    {
+        int      InputIndex;
+        int      OutputIndex;
+        int      SaveDataNumber;
+        int      Delay;
+        int      Interval;
+    } SecondPanelValue;
 
 protected:
 
@@ -142,28 +152,40 @@ protected:
         inimoni::inirw( r,f,s, _T("Delay            "), NotchValue.Delay   );
         inimoni::inirw( r,f,s, _T("Interval         "), NotchValue.Interval );
 
-        s = _T("PanelValue");
-        inimoni::inirw( r,f,s, _T("InputIndex       "), PanelValue.InputIndex );
-        inimoni::inirw( r,f,s, _T("OutputIndex      "), PanelValue.OutputIndex );
-        inimoni::inirw( r,f,s, _T("SaveDataNumber   "), PanelValue.SaveDataNumber );
-        inimoni::inirw( r,f,s, _T("Delay            "), PanelValue.Delay   );
-        inimoni::inirw( r,f,s, _T("Interval         "), PanelValue.Interval );
+        s = _T("FirstPanelValue");
+        inimoni::inirw( r,f,s, _T("InputIndex       "), FirstPanelValue.InputIndex );
+        inimoni::inirw( r,f,s, _T("OutputIndex      "), FirstPanelValue.OutputIndex );
+        inimoni::inirw( r,f,s, _T("SaveDataNumber   "), FirstPanelValue.SaveDataNumber );
+        inimoni::inirw( r,f,s, _T("Delay            "), FirstPanelValue.Delay );
+        inimoni::inirw( r,f,s, _T("Interval         "), FirstPanelValue.Interval );
+
+        s = _T("SecondPanelValue");
+        inimoni::inirw( r,f,s, _T("InputIndex       "), SecondPanelValue.InputIndex );
+        inimoni::inirw( r,f,s, _T("OutputIndex      "), SecondPanelValue.OutputIndex );
+        inimoni::inirw( r,f,s, _T("SaveDataNumber   "), SecondPanelValue.SaveDataNumber );
+        inimoni::inirw( r,f,s, _T("Delay            "), SecondPanelValue.Delay );
+        inimoni::inirw( r,f,s, _T("Interval         "), SecondPanelValue.Interval );
         return true;                                                    
     }                                                                   
 
     void init()                                                         
     {                                                                   
-        NotchValue.PowerIndex        = 200;
+        NotchValue.PowerIndex        = 999;
         NotchValue.PowerSaveDataNumber = 6;
-        NotchValue.BrakeIndex        = 201;
+        NotchValue.BrakeIndex        = 999;
         NotchValue.BrakeSaveDataNumber = 9;
         NotchValue.Delay             = 750;
         NotchValue.Interval          = 150;
-        PanelValue.InputIndex        = 202;
-        PanelValue.OutputIndex       = 202;
-        PanelValue.SaveDataNumber    = 4;
-        PanelValue.Delay             = 750;
-        PanelValue.Interval          = 150;
+        FirstPanelValue.InputIndex   = 999;
+        FirstPanelValue.OutputIndex  = 999;
+        FirstPanelValue.SaveDataNumber = 4;
+        FirstPanelValue.Delay        = 750;
+        FirstPanelValue.Interval     = 150;
+        SecondPanelValue.InputIndex  = 999;
+        SecondPanelValue.OutputIndex = 999;
+        SecondPanelValue.SaveDataNumber = 4;
+        SecondPanelValue.Delay       = 750;
+        SecondPanelValue.Interval    = 150;
     }                                                                   
 };
 typedef DigitalNotchIni DigitalNotchFile; //êVãåå›ä∑

@@ -90,31 +90,17 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 			PowerData = g_powerNotch;
 		}
 	}
-	if (g_ini.PanelValue.Interval <= 0) {
-		for (unsigned int i = 0; i <= PanelData.size() + 1; i++) {
-			if (PanelData[i] != panel[i]) {
-				PanelData[i] = panel[i];
-			}
-		}
-	}
-	else {
-		PanelUpdate = bool((vehicleState.Time / g_ini.PanelValue.Interval) % 2);
-		if (!(PanelUpdateOld) && PanelUpdate) {
-			for (unsigned int i = 0; i <= PanelData.size() + 1; i++) {
-				if (PanelData[i] != panel[i]) {
-					PanelData[i] = panel[i];
-				}
-			}
-		}
-	}
 	if (0 <= g_ini.NotchValue.PowerIndex && g_ini.NotchValue.PowerIndex <= 255)PowerLagMain(&panel[g_ini.NotchValue.PowerIndex], vehicleState.Time, PowerData, g_powerNotchOld);
 	if (0 <= g_ini.NotchValue.BrakeIndex && g_ini.NotchValue.BrakeIndex <= 255)BrakeLagMain(&panel[g_ini.NotchValue.BrakeIndex], vehicleState.Time, BrakeData, g_brakeNotchOld);
-	if ((0 <= g_ini.PanelValue.InputIndex && g_ini.PanelValue.InputIndex <= 255) && (0 <= g_ini.PanelValue.OutputIndex && g_ini.PanelValue.OutputIndex <= 255))PanelLagMain(&panel[g_ini.PanelValue.OutputIndex], vehicleState.Time);
+	if ((0 <= g_ini.FirstPanelValue.InputIndex && g_ini.FirstPanelValue.InputIndex <= 255) && (0 <= g_ini.FirstPanelValue.OutputIndex && g_ini.FirstPanelValue.OutputIndex <= 255))FirstPanelLagMain(&panel[g_ini.FirstPanelValue.OutputIndex], g_ini.FirstPanelValue.InputIndex, g_ini.FirstPanelValue.Delay, g_ini.FirstPanelValue.SaveDataNumber, g_ini.FirstPanelValue.Interval, vehicleState.Time, panel);
+	if ((0 <= g_ini.SecondPanelValue.InputIndex && g_ini.SecondPanelValue.InputIndex <= 255) && (0 <= g_ini.SecondPanelValue.OutputIndex && g_ini.SecondPanelValue.OutputIndex <= 255))SecondPanelLagMain(&panel[g_ini.SecondPanelValue.OutputIndex], g_ini.SecondPanelValue.InputIndex, g_ini.SecondPanelValue.Delay, g_ini.SecondPanelValue.SaveDataNumber, g_ini.SecondPanelValue.Interval, vehicleState.Time, panel);
 	g_brakeNotchOld = BrakeData;
 	g_powerNotchOld = PowerData;
 	NotchUpdateOld = NotchUpdate;
-	PanelUpdateOld = PanelUpdate;
-	PanelDataOld = PanelData;
+	FirstPanelUpdateOld = FirstPanelUpdate;
+	SecondPanelUpdateOld = SecondPanelUpdate;
+	FirstPanelDataOld = FirstPanelData;
+	SecondPanelDataOld = SecondPanelData;
     return g_output;
 }
 

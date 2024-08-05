@@ -23,8 +23,10 @@ int BrakeData; // 制動段数情報
 int PowerData; // 力行段数情報
 bool NotchUpdate; // ノッチ更新
 bool NotchUpdateOld; // 1F前のノッチ更新
-bool PanelUpdate; // パネル更新
-bool PanelUpdateOld; // 1F前のパネル更新
+bool FirstPanelUpdate; // パネル更新
+bool FirstPanelUpdateOld; // 1F前のパネル更新
+bool SecondPanelUpdate; // パネル更新
+bool SecondPanelUpdateOld; // 1F前のパネル更新
 
 ATS_HANDLES g_output; // 出力
 doorCloseingSecurity g_doorCloseingSecurity; // 戸閉保安
@@ -34,11 +36,15 @@ std::vector<int> BrakeChangeTime; // 制動段数変更時間履歴
 std::vector<int> BrakeValue; // 制動段数変更履歴
 std::vector<int> PowerChangeTime; // 力行段数変更時間履歴
 std::vector<int> PowerValue; // 力行段数変更履歴
-std::vector<int> PanelChangeTime{0}; // パネル変更時間履歴
-std::vector<int> PanelValue{0}; // パネル変更履歴
+std::vector<int> FirstPanelChangeTime{0}; // パネル変更時間履歴
+std::vector<int> FirstPanelValue{0}; // パネル変更履歴
+std::vector<int> SecondPanelChangeTime{ 0 }; // パネル変更時間履歴
+std::vector<int> SecondPanelValue{ 0 }; // パネル変更履歴
 
-std::vector<int> PanelData(256, 0); // すべてのパネルデータ
-std::vector<int> PanelDataOld(256, 0); // 1F前のすべてのパネルデータ
+std::vector<int> FirstPanelData(256, 0); // すべてのパネルデータ
+std::vector<int> FirstPanelDataOld(256, 0); // 1F前のすべてのパネルデータ
+std::vector<int> SecondPanelData(256, 0); // すべてのパネルデータ
+std::vector<int> SecondPanelDataOld(256, 0); // 1F前のすべてのパネルデータ
 
 void BrakeLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOld) {
 	if (ValueData != ValueOld) {
@@ -82,21 +88,76 @@ void PowerLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOl
 	}
 }
 
-void PanelLagMain(int* pOutputTargetIndex, int CurrentTime) {
-	if (PanelData[g_ini.PanelValue.InputIndex] != PanelDataOld[g_ini.PanelValue.InputIndex]) {
-		// 1F前のパネルと現在のパネルが異なれば、履歴に時間と段数を入れる
-		PanelChangeTime.push_back(CurrentTime);
-		PanelValue.push_back(PanelData[g_ini.PanelValue.InputIndex]);
+void FirstPanelLagMain(int* pOutputTargetIndex, int InputIndex, int Delay, int SaveDataNumber, int Interval, int CurrentTime, int* panel) {
+	if (Interval <= 0) {
+		for (unsigned int i = 0; i <= FirstPanelData.size() + 1; i++) {
+			if (FirstPanelData[i] != panel[i]) {
+				FirstPanelData[i] = panel[i];
+			}
+		}
 	}
-	for (unsigned int i = 0; i <= PanelChangeTime.size() + 1; i++) {
-		if (PanelValue.size() != NULL) {
-			if (CurrentTime - PanelChangeTime[i - 2] >= g_ini.PanelValue.Delay) {
+	else {
+		FirstPanelUpdate = bool((CurrentTime / Interval) % 2);
+		if (!(FirstPanelUpdateOld) && FirstPanelUpdate) {
+			for (unsigned int i = 0; i <= FirstPanelData.size() + 1; i++) {
+				if (FirstPanelData[i] != panel[i]) {
+					FirstPanelData[i] = panel[i];
+				}
+			}
+		}
+	}
+	if (FirstPanelData[InputIndex] != FirstPanelDataOld[InputIndex]) {
+		// 1F前のパネルと現在のパネルが異なれば、履歴に時間と段数を入れる
+		FirstPanelChangeTime.push_back(CurrentTime);
+		FirstPanelValue.push_back(FirstPanelData[InputIndex]);
+	}
+	for (unsigned int i = 0; i <= FirstPanelChangeTime.size() + 1; i++) {
+		if (FirstPanelValue.size() != NULL) {
+			if (CurrentTime - FirstPanelChangeTime[i - 2] >= Delay) {
 				// 遅延時間を満たす場合、表示を更新
-				*pOutputTargetIndex = PanelValue[i - 2];
-				if (PanelChangeTime.size() > g_ini.PanelValue.SaveDataNumber) {
+				*pOutputTargetIndex = FirstPanelValue[i - 2];
+				if (FirstPanelChangeTime.size() > SaveDataNumber) {
 					// セーブデータの個数より多くなれば、最初の一個目を削除
-					PanelChangeTime.erase(PanelChangeTime.begin());
-					PanelValue.erase(PanelValue.begin());
+					FirstPanelChangeTime.erase(FirstPanelChangeTime.begin());
+					FirstPanelValue.erase(FirstPanelValue.begin());
+				}
+			}
+		}
+	}
+}
+
+void SecondPanelLagMain(int* pOutputTargetIndex, int InputIndex, int Delay, int SaveDataNumber, int Interval, int CurrentTime, int* panel) {
+	if (Interval <= 0) {
+		for (unsigned int i = 0; i <= SecondPanelData.size() + 1; i++) {
+			if (SecondPanelData[i] != panel[i]) {
+				SecondPanelData[i] = panel[i];
+			}
+		}
+	}
+	else {
+		SecondPanelUpdate = bool((CurrentTime / Interval) % 2);
+		if (!(SecondPanelUpdateOld) && SecondPanelUpdate) {
+			for (unsigned int i = 0; i <= SecondPanelData.size() + 1; i++) {
+				if (SecondPanelData[i] != panel[i]) {
+					SecondPanelData[i] = panel[i];
+				}
+			}
+		}
+	}
+	if (SecondPanelData[InputIndex] != SecondPanelDataOld[InputIndex]) {
+		// 1F前のパネルと現在のパネルが異なれば、履歴に時間と段数を入れる
+		SecondPanelChangeTime.push_back(CurrentTime);
+		SecondPanelValue.push_back(SecondPanelData[InputIndex]);
+	}
+	for (unsigned int i = 0; i <= SecondPanelChangeTime.size() + 1; i++) {
+		if (SecondPanelValue.size() != NULL) {
+			if (CurrentTime - SecondPanelChangeTime[i - 2] >= Delay) {
+				// 遅延時間を満たす場合、表示を更新
+				*pOutputTargetIndex = SecondPanelValue[i - 2];
+				if (SecondPanelChangeTime.size() > SaveDataNumber) {
+					// セーブデータの個数より多くなれば、最初の一個目を削除
+					SecondPanelChangeTime.erase(SecondPanelChangeTime.begin());
+					SecondPanelValue.erase(SecondPanelValue.begin());
 				}
 			}
 		}
