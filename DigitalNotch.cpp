@@ -1,4 +1,4 @@
-// Ats.cpp : DLL ƒAƒvƒŠƒP[ƒVƒ‡ƒ“—p‚ÌƒGƒ“ƒgƒŠ ƒ|ƒCƒ“ƒg‚ğ’è‹`‚µ‚Ü‚·B
+ï»¿// Ats.cpp : DLL ã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ç”¨ã®ã‚¨ãƒ³ãƒˆãƒª ãƒã‚¤ãƒ³ãƒˆã‚’å®šç¾©ã—ã¾ã™ã€‚
 //
 
 #include "stdafx.h"
@@ -10,7 +10,7 @@
 #include <cmath>
 #include <vector>
 
-/// ‚±‚ÌATSƒvƒ‰ƒOƒCƒ“‚ÌAƒRƒ“ƒsƒ…[ƒ^ã‚Ìâ‘ÎƒpƒX
+/// ã“ã®ATSãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®ã€ã‚³ãƒ³ãƒ”ãƒ¥ãƒ¼ã‚¿ä¸Šã®çµ¶å¯¾ãƒ‘ã‚¹
 char g_module_dir[MAX_PATH];
 using namespace std;
 
@@ -37,13 +37,13 @@ BOOL APIENTRY DllMain(
 		strcpy_s(g_module_dir, drive);
 		strcat_s(g_module_dir, dir);
 
-		//ƒpƒX‚©‚ç.dll‚ÌˆÊ’u‚ğŒŸõ
+		//ãƒ‘ã‚¹ã‹ã‚‰.dllã®ä½ç½®ã‚’æ¤œç´¢
 		posIni = strstr(fullpath, ".dll");
 
-		// .dll‚ğ.ini‚É’uŠ·
+		// .dllã‚’.iniã«ç½®æ›
 		memmove(posIni, ".ini", 4);
 
-		// INIƒtƒ@ƒCƒ‹‚ğƒ[ƒh‚µ‚ÄŒ‹‰Ê‚ğæ“¾
+		// INIãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰ã—ã¦çµæœã‚’å–å¾—
 		if (!g_ini.load(fullpath))
 			g_ini.save(fullpath);
 	}
@@ -71,6 +71,7 @@ ATS_API void WINAPI SetVehicleSpec(ATS_VEHICLESPEC vehicleSpec)
 ATS_API void WINAPI Initialize(int brake)
 {
 	g_speed = 0;
+	Init(g_time, g_brakeNotch, g_powerNotch);
 }
 
 ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int *sound)
@@ -78,7 +79,8 @@ ATS_API ATS_HANDLES WINAPI Elapse(ATS_VEHICLESTATE vehicleState, int *panel, int
 	g_speed = vehicleState.Speed;
 	g_output.Brake = g_brakeNotch;
 	g_output.Power = g_powerNotch;
-	g_output.Reverser = g_doorCloseingSecurity.main(g_pilotlamp, g_reverser); // ŒË•Â•ÛˆÀo—Í
+	g_output.Reverser = g_doorCloseingSecurity.main(g_pilotlamp, g_reverser); // æˆ¸é–‰ä¿å®‰å‡ºåŠ›
+	g_time = vehicleState.Time;
 	if (g_ini.NotchValue.Interval <= 0) {
 		BrakeData = g_brakeNotch;
 		PowerData = g_powerNotch;

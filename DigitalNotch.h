@@ -1,4 +1,4 @@
-// 以下の ifdef ブロックは DLL から簡単にエクスポートさせるマクロを作成する標準的な方法です。 
+﻿// 以下の ifdef ブロックは DLL から簡単にエクスポートさせるマクロを作成する標準的な方法です。 
 // この DLL 内のすべてのファイルはコマンドラインで定義された ATS_EXPORTS シンボル
 // でコンパイルされます。このシンボルはこの DLL が使用するどのプロジェクト上でも未定義でなけ
 // ればなりません。この方法ではソースファイルにこのファイルを含むすべてのプロジェクトが DLL 
@@ -18,6 +18,7 @@ int g_powerNotchOld; // 力行ノッチ
 int g_reverser; // レバーサ
 bool g_pilotlamp; // パイロットランプ
 float g_speed; // 速度計の速度[km/h]
+int g_time; // 現在時刻
 
 int BrakeData; // 制動段数情報
 int PowerData; // 力行段数情報
@@ -27,6 +28,8 @@ bool FirstPanelUpdate; // パネル更新
 bool FirstPanelUpdateOld; // 1F前のパネル更新
 bool SecondPanelUpdate; // パネル更新
 bool SecondPanelUpdateOld; // 1F前のパネル更新
+int InitFirstPanelData; // 初期値
+int InitSecondPanelData; // 初期値
 
 ATS_HANDLES g_output; // 出力
 doorCloseingSecurity g_doorCloseingSecurity; // 戸閉保安
@@ -46,17 +49,24 @@ std::vector<int> FirstPanelDataOld(256, 0); // 1F前のすべてのパネルデ�
 std::vector<int> SecondPanelData(256, 0); // すべてのパネルデータ
 std::vector<int> SecondPanelDataOld(256, 0); // 1F前のすべてのパネルデータ
 
+void Init(int CurrentTime, int BrakeData, int PowerData) {
+	BrakeChangeTime.push_back(CurrentTime);
+	BrakeValue.push_back(BrakeData);
+	PowerChangeTime.push_back(CurrentTime);
+	PowerValue.push_back(PowerData);
+}
+
 void BrakeLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOld) {
 	if (ValueData != ValueOld) {
 		// 1F前の制動段数と現在の制動段数が異なれば、履歴に時間と段数を入れる
 		BrakeChangeTime.push_back(CurrentTime);
 		BrakeValue.push_back(ValueData);
 	}
-	for (unsigned int i = 0; i <= BrakeChangeTime.size() + 1; i++) {
+	for (unsigned int i = 0; i < BrakeChangeTime.size(); i++) {
 		if (BrakeValue.size() != NULL) {
-			if (CurrentTime - BrakeChangeTime[i - 2] >= g_ini.NotchValue.Delay) {
+			if (CurrentTime - BrakeChangeTime[i] >= g_ini.NotchValue.Delay) {
 				// 遅延時間を満たす場合、表示を更新
-				*pTargetIndex = BrakeValue[i - 2];
+				*pTargetIndex = BrakeValue[i];
 				if (BrakeChangeTime.size() > g_ini.NotchValue.BrakeSaveDataNumber) {
 					// セーブデータの個数より多くなれば、最初の一個目を削除
 					BrakeChangeTime.erase(BrakeChangeTime.begin());
@@ -73,11 +83,11 @@ void PowerLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOl
 		PowerChangeTime.push_back(CurrentTime);
 		PowerValue.push_back(ValueData);
 	}
-	for (unsigned int i = 0; i <= PowerChangeTime.size() + 1; i++) {
+	for (unsigned int i = 0; i < PowerChangeTime.size(); i++) {
 		if (PowerValue.size() != NULL) {
-			if (CurrentTime - PowerChangeTime[i - 2] >= g_ini.NotchValue.Delay) {
+			if (CurrentTime - PowerChangeTime[i] >= g_ini.NotchValue.Delay) {
 				// 遅延時間を満たす場合、表示を更新
-				*pTargetIndex = PowerValue[i - 2];
+				*pTargetIndex = PowerValue[i];
 				if (PowerChangeTime.size() > g_ini.NotchValue.PowerSaveDataNumber) {
 					// セーブデータの個数より多くなれば、最初の一個目を削除
 					PowerChangeTime.erase(PowerChangeTime.begin());
@@ -90,7 +100,7 @@ void PowerLagMain(int* pTargetIndex, int CurrentTime, int ValueData, int ValueOl
 
 void FirstPanelLagMain(int* pOutputTargetIndex, int InputIndex, int Delay, int SaveDataNumber, int Interval, int CurrentTime, int* panel) {
 	if (Interval <= 0) {
-		for (unsigned int i = 0; i <= FirstPanelData.size() + 1; i++) {
+		for (unsigned int i = 0; i < FirstPanelData.size(); i++) {
 			if (FirstPanelData[i] != panel[i]) {
 				FirstPanelData[i] = panel[i];
 			}
@@ -99,7 +109,7 @@ void FirstPanelLagMain(int* pOutputTargetIndex, int InputIndex, int Delay, int S
 	else {
 		FirstPanelUpdate = bool((CurrentTime / Interval) % 2);
 		if (!(FirstPanelUpdateOld) && FirstPanelUpdate) {
-			for (unsigned int i = 0; i <= FirstPanelData.size() + 1; i++) {
+			for (unsigned int i = 0; i < FirstPanelData.size(); i++) {
 				if (FirstPanelData[i] != panel[i]) {
 					FirstPanelData[i] = panel[i];
 				}
@@ -111,11 +121,11 @@ void FirstPanelLagMain(int* pOutputTargetIndex, int InputIndex, int Delay, int S
 		FirstPanelChangeTime.push_back(CurrentTime);
 		FirstPanelValue.push_back(FirstPanelData[InputIndex]);
 	}
-	for (unsigned int i = 0; i <= FirstPanelChangeTime.size() + 1; i++) {
+	for (unsigned int i = 0; i < FirstPanelChangeTime.size(); i++) {
 		if (FirstPanelValue.size() != NULL) {
-			if (CurrentTime - FirstPanelChangeTime[i - 2] >= Delay) {
+			if (CurrentTime - FirstPanelChangeTime[i] >= Delay) {
 				// 遅延時間を満たす場合、表示を更新
-				*pOutputTargetIndex = FirstPanelValue[i - 2];
+				*pOutputTargetIndex = FirstPanelValue[i];
 				if (FirstPanelChangeTime.size() > SaveDataNumber) {
 					// セーブデータの個数より多くなれば、最初の一個目を削除
 					FirstPanelChangeTime.erase(FirstPanelChangeTime.begin());
@@ -128,7 +138,7 @@ void FirstPanelLagMain(int* pOutputTargetIndex, int InputIndex, int Delay, int S
 
 void SecondPanelLagMain(int* pOutputTargetIndex, int InputIndex, int Delay, int SaveDataNumber, int Interval, int CurrentTime, int* panel) {
 	if (Interval <= 0) {
-		for (unsigned int i = 0; i <= SecondPanelData.size() + 1; i++) {
+		for (unsigned int i = 0; i < SecondPanelData.size(); i++) {
 			if (SecondPanelData[i] != panel[i]) {
 				SecondPanelData[i] = panel[i];
 			}
@@ -137,7 +147,7 @@ void SecondPanelLagMain(int* pOutputTargetIndex, int InputIndex, int Delay, int 
 	else {
 		SecondPanelUpdate = bool((CurrentTime / Interval) % 2);
 		if (!(SecondPanelUpdateOld) && SecondPanelUpdate) {
-			for (unsigned int i = 0; i <= SecondPanelData.size() + 1; i++) {
+			for (unsigned int i = 0; i < SecondPanelData.size(); i++) {
 				if (SecondPanelData[i] != panel[i]) {
 					SecondPanelData[i] = panel[i];
 				}
@@ -149,11 +159,11 @@ void SecondPanelLagMain(int* pOutputTargetIndex, int InputIndex, int Delay, int 
 		SecondPanelChangeTime.push_back(CurrentTime);
 		SecondPanelValue.push_back(SecondPanelData[InputIndex]);
 	}
-	for (unsigned int i = 0; i <= SecondPanelChangeTime.size() + 1; i++) {
+	for (unsigned int i = 0; i < SecondPanelChangeTime.size(); i++) {
 		if (SecondPanelValue.size() != NULL) {
-			if (CurrentTime - SecondPanelChangeTime[i - 2] >= Delay) {
+			if (CurrentTime - SecondPanelChangeTime[i] >= Delay) {
 				// 遅延時間を満たす場合、表示を更新
-				*pOutputTargetIndex = SecondPanelValue[i - 2];
+				*pOutputTargetIndex = SecondPanelValue[i];
 				if (SecondPanelChangeTime.size() > SaveDataNumber) {
 					// セーブデータの個数より多くなれば、最初の一個目を削除
 					SecondPanelChangeTime.erase(SecondPanelChangeTime.begin());
@@ -163,4 +173,3 @@ void SecondPanelLagMain(int* pOutputTargetIndex, int InputIndex, int Delay, int 
 		}
 	}
 }
-
